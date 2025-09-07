@@ -80,8 +80,11 @@ class GridBrickViewController extends ChangeNotifier {
   set selectedAlgorithm(PathFindingAlgorithmBase? algorithm){
     _selectedAlgorithm = algorithm;
     grid.reset(keepWalls: true);
-    _selectedAlgorithm?.init(grid);
-    _selectedAlgorithm?.findPath();
+    Future.delayed(const Duration(milliseconds: 100)).then((_) {
+      _selectedAlgorithm?.init(grid);
+      _selectedAlgorithm?.findPath();
+    });
+    
   }
 
   void randomizeWalls() {

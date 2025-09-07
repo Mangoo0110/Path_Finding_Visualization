@@ -14,5 +14,5 @@ abstract class PathFindingAlgorithmBase {
     this.grid = grid;
     visitedCellsInOrder = [];
   }
-  Future<Visualizer> findPath();
+  findPath();
 }

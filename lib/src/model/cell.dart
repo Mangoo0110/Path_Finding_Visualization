@@ -91,4 +91,14 @@ class Cell extends ChangeNotifier{
     notifyListeners();
   }
 
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! Cell) return false;
+    return row == other.row && col == other.col;
+  }
+
+  @override
+  int get hashCode => Object.hash(row, col);
 }

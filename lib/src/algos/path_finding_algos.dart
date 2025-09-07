@@ -12,7 +12,7 @@ class BfsAlgorithm extends PathFindingAlgorithmBase {
   
 
   @override
-  Future<Visualizer> findPath() async{
+  findPath() async{
     if(grid == null) {
       debugPrint("Grid is null. Call init() first.");
       return Visualizer(visitedCellsInOrder: visitedCellsInOrder, shortestPathCellsInOrder: []);
@@ -25,50 +25,65 @@ class BfsAlgorithm extends PathFindingAlgorithmBase {
     if (startCell == null || endCell == null) return Visualizer(visitedCellsInOrder: visitedCellsInOrder, shortestPathCellsInOrder: []);
     queue.add(startCell);
     Map<Cell, Cell?> parentMap = {};
+    startCell.isVisited = true;
+    parentMap[startCell] = null;
     while(queue.isNotEmpty) {
       Cell current = queue.removeFirst();
-        if (current == endCell) {
+        if (current.isEnd) {
           // Path is found
           debugPrint("Path found!");
           _reconstructPath(parentMap, endCell);
           // exit the loop
           return Visualizer(visitedCellsInOrder: visitedCellsInOrder, shortestPathCellsInOrder: []);
         }
-        current.isVisited = true;
-        debugPrint("Visiting Cell: (${current.row}, ${current.col})");
-        // delay every animation
-        await Future.delayed(const Duration(microseconds: 0));
-        visitedCellsInOrder.add(current);
         
         List<Cell> neighbors = _getNeighbors(current);
         for (var neighbor in neighbors) {
           if (!neighbor.isVisited && !neighbor.isWall) {
             queue.add(neighbor);
             parentMap[neighbor] = current;
+            neighbor.isVisited = true;
+            await Future.delayed(const Duration(milliseconds: 15));
           }
         }
     }
+    debugPrint("Done searching. No path found.");
     return Visualizer(visitedCellsInOrder: visitedCellsInOrder, shortestPathCellsInOrder: []);
   }
 
-  _getNeighbors(Cell cell) {
-    List<Cell> neighbors = [];
-    int row = cell.row;
-    int col = cell.col;
-    if (row > 0) neighbors.add(grid!.cells[row - 1][col]); // Up
-    if (row < grid!.rows - 1) neighbors.add(grid!.cells[row + 1][col]); // Down
-    if (col > 0) neighbors.add(grid!.cells[row][col - 1]); // Left
-    if (col < grid!.cols - 1) neighbors.add(grid!.cells[row][col + 1]); // Right
-    return neighbors;
+  List<Cell> _getNeighbors(Cell cell) {
+    try {
+    //debugPrint("Getting neighbors for Cell: (${cell.row}, ${cell.col})");
+      List<Cell> neighbors = <Cell>[];
+      int row = cell.row;
+      int col = cell.col;
+      //debugPrint("up neighbour: (${row - 1}, $col)");
+      if (row > 0 && (!grid!.cells[row - 1][col].isVisited && !grid!.cells[row - 1][col].isWall)) neighbors.add(grid!.cells[row - 1][col]); // Up
+      //debugPrint("down neighbour: (${row + 1}, $col)");
+      if (row < grid!.rows - 1 && (!grid!.cells[row + 1][col].isVisited && !grid!.cells[row + 1][col].isWall)) neighbors.add(grid!.cells[row + 1][col]); // Down
+      //debugPrint("left neighbour: ($row, ${col - 1})");
+      if (col > 0 && (!grid!.cells[row][col - 1].isVisited || !grid!.cells[row][col - 1].isWall)) neighbors.add(grid!.cells[row][col - 1]); // Left
+      //debugPrint("right neighbour: ($row, ${col + 1})");
+      if (col < grid!.cols - 1 && (!grid!.cells[row][col + 1].isVisited || !grid!.cells[row][col + 1].isWall)) neighbors.add(grid!.cells[row][col + 1]); // Right
+      
+      return neighbors;
+    } catch (e) {
+      debugPrint("Error getting neighbors: $e");
+      return [];
+    }
   }
+
+
   
   void _reconstructPath(Map<Cell, Cell?> parentMap, Cell endCell) async{
     Cell? current = endCell;
+    debugPrint("Reconstructing path...");
     while (current != null) {
-      current.isPath = true;
       current = parentMap[current];
+      current?.isPath = true;
+      
       // delay every animation
-      await Future.delayed(const Duration(milliseconds: 25));
+      await Future.delayed(const Duration(milliseconds: 10));
     }
   }
 }
@@ -79,9 +94,8 @@ class DfsAlgorithm extends PathFindingAlgorithmBase {
 
   // DFS algorithm implementation
   @override
-  Future<Visualizer> findPath() async{
+  findPath() async{
     // Start
-    return Visualizer(visitedCellsInOrder: [], shortestPathCellsInOrder: []);
   }
 }
 
@@ -90,9 +104,8 @@ class DijkstraAlgorithm extends PathFindingAlgorithmBase {
 
   // Dijkstra's algorithm implementation
   @override
-  Future<Visualizer> findPath() async{
+  findPath() async{
     // Start
-    return Visualizer(visitedCellsInOrder: [], shortestPathCellsInOrder: []);
   }
 }
 
@@ -101,8 +114,7 @@ class AStarAlgorithm extends PathFindingAlgorithmBase {
 
   // A* algorithm implementation
   @override
-  Future<Visualizer> findPath() async{
+  findPath() async{
     // Start
-    return Visualizer(visitedCellsInOrder: [], shortestPathCellsInOrder: []);
   }
 }

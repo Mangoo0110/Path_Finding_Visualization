@@ -14,6 +14,7 @@ class Grid{
   Cell? get currentEndCell => _currentEndCell;
 
   Grid({required this.rows, required this.cols}) {
+    assert(rows > 0 && cols > 0, "Rows and Columns must be greater than 0");
     cells = List.generate(rows, (row) {
       return List.generate(cols, (col) => Cell(row: row, col: col));
     });
@@ -21,6 +22,9 @@ class Grid{
 
   // set start cell
   void setStart(int row, int col) {
+    if(row < 0 || row >= rows || col < 0 || col >= cols) {
+      throw Exception("Invalid cell position");
+    }
     if (_currentStartCell != null) {
       _currentStartCell!.isStart = false;
     }
@@ -31,6 +35,9 @@ class Grid{
 
   // set end cell
   void setEnd(int row, int col) {
+    if(row < 0 || row >= rows || col < 0 || col >= cols) {
+      throw Exception("Invalid cell position");
+    }
     if (_currentEndCell != null) {
       _currentEndCell!.isEnd = false;
     }
