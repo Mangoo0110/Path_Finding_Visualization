@@ -2,6 +2,10 @@
 import 'dart:math';
 import 'package:flutter/widgets.dart';
 import 'package:path_finding_visualization/src/algos/path_finding_algos.dart';
+import '../algos/astar.dart';
+import '../algos/bfs.dart';
+import '../algos/dfs.dart';
+import '../algos/djikstra.dart';
 import '../interfaces/path_finding_algorithm.dart';
 import '../model/grid.dart';
  
@@ -14,8 +18,8 @@ enum UserActionState {
 }
 
 class GridBrickViewController extends ChangeNotifier {
-  PathFindingAlgorithmBase? _selectedAlgorithm;
-  List<PathFindingAlgorithmBase> get algorithms => [
+  PathFindingAlgorithm? _selectedAlgorithm;
+  List<PathFindingAlgorithm> get algorithms => [
         BfsAlgorithm(),
         DfsAlgorithm(),
         DijkstraAlgorithm(),
@@ -76,15 +80,23 @@ class GridBrickViewController extends ChangeNotifier {
     grid.setEnd(endRow, endCol);
   }
 
-  PathFindingAlgorithmBase? get selectedAlgorithm => _selectedAlgorithm;
-  set selectedAlgorithm(PathFindingAlgorithmBase? algorithm){
+  PathFindingAlgorithm? get selectedAlgorithm => _selectedAlgorithm;
+  set selectedAlgorithm(PathFindingAlgorithm? algorithm){
     _selectedAlgorithm = algorithm;
     grid.reset(keepWalls: true);
     Future.delayed(const Duration(milliseconds: 100)).then((_) {
-      _selectedAlgorithm?.init(grid);
-      _selectedAlgorithm?.findPath();
+      _findPathAndVisualize();
     });
     
+  }
+
+  _findPathAndVisualize() async {
+    if (_selectedAlgorithm == null) return;
+    grid.reset(keepWalls: true);
+    _selectedAlgorithm?.init(grid);
+    await _selectedAlgorithm?.findShortestPath().then((_){
+      //_selectedAlgorithm?.constructPath();
+    });
   }
 
   void randomizeWalls() {
