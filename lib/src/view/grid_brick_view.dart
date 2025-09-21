@@ -27,17 +27,17 @@ class _GridBrickViewState extends State<GridBrickView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  DropdownButton<PathFindingAlgorithmBase>(
+                  DropdownButton<PathFindingAlgorithm>(
                     hint: Text(_gridBrickViewController.selectedAlgorithm?.name ?? 'Select Algorithm'),
                     value: _gridBrickViewController.selectedAlgorithm,
-                    items: _gridBrickViewController.algorithms.map((PathFindingAlgorithmBase algorithm) {
-                      return DropdownMenuItem<PathFindingAlgorithmBase>(
+                    items: _gridBrickViewController.algorithms.map((PathFindingAlgorithm algorithm) {
+                      return DropdownMenuItem<PathFindingAlgorithm>(
                         value: algorithm,
                         
                         child: Text(algorithm.name.toUpperCase()),
                       );
                     }).toList(),
-                    onChanged: (PathFindingAlgorithmBase? newValue) {
+                    onChanged: (PathFindingAlgorithm? newValue) {
                       // Handle algorithm change
                       if (newValue != null) {
                         _gridBrickViewController.selectedAlgorithm = newValue;
